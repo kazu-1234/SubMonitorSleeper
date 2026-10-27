@@ -6,6 +6,8 @@
     <RootNamespace>SubMonitorSleeper</RootNamespace>
     <AssemblyName>SubMonitorSleeper</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- exe 自体のアイコン（エクスプローラー・ショートカット・タスクバーに出る） -->
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <Platform Condition="'$(Platform)' == '' Or '$(Platform)' == 'AnyCPU'">x64</Platform>
