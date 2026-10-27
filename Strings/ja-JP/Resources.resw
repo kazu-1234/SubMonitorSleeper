@@ -289,4 +289,10 @@
   <data name="Ddc_VerifyFailed" xml:space="preserve">
     <value>モニターの電源状態を確認できませんでした</value>
   </data>
+  <data name="Settings_AutostartTaskOnly.Content" xml:space="preserve">
+    <value>スタートアップには登録せずログイン時のタスクとして実行</value>
+  </data>
+  <data name="Settings_AutostartMode_StartupShort" xml:space="preserve">
+    <value>スタートアップ</value>
+  </data>
 </root>

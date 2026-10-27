@@ -42,6 +42,7 @@ namespace SubMonitorSleeper.Views
             };
 
             AutoStartToggle.IsOn = _state.Settings.AutoStart;
+            AutostartTaskOnlyCheckBox.IsChecked = _state.Settings.UseLogonTask;
             HideTrayIconCheckBox.IsChecked = _state.Settings.HideTrayIcon;
             AutoStartExpander.IsExpanded = true;
             RefreshAutostartInfo();
@@ -111,16 +112,18 @@ namespace SubMonitorSleeper.Views
         private void RefreshAutostartInfo()
         {
             bool enabled = _state?.Settings.AutoStart ?? false;
+            bool useLogonTask = _state?.Settings.UseLogonTask ?? true;
 
+            // 種類（タスク / スタートアップ）とパスは、今選んでいる方式で表示する
             AutostartTypeLine.Text = AutostartInfoFormatter.FormatTypeLine(
                 enabled,
-                useLogonTask: true,
+                useLogonTask,
                 Strings.Get,
                 (key, args) => Strings.Format(key, args));
 
             AutostartPathLine.Text = AutostartInfoFormatter.FormatPathLine(
                 enabled,
-                StartupManager.GetRegisteredCommand(),
+                StartupManager.GetRegisteredCommand(preferLogonTask: useLogonTask),
                 Strings.Get,
                 (key, args) => Strings.Format(key, args));
         }
@@ -131,7 +134,7 @@ namespace SubMonitorSleeper.Views
                 return;
 
             if (_state.Settings.AutoStart)
-                StartupManager.SyncAutostartWithSettings(true);
+                StartupManager.SyncAutostartWithSettings(true, _state.Settings.UseLogonTask);
 
             RefreshAutostartInfo();
         }
@@ -142,7 +145,7 @@ namespace SubMonitorSleeper.Views
                 return;
 
             bool requested = AutoStartToggle.IsOn;
-            if (!StartupManager.SyncAutostartWithSettings(requested) && requested)
+            if (!StartupManager.SyncAutostartWithSettings(requested, _state.Settings.UseLogonTask) && requested)
             {
                 _isInitializing = true;
                 AutoStartToggle.IsOn = false;
@@ -151,6 +154,36 @@ namespace SubMonitorSleeper.Views
             }
 
             _state.Settings.AutoStart = requested;
+            _state.Settings.Save();
+            RefreshAutostartInfo();
+        }
+
+        private void AutostartTaskOnlyCheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            if (_isInitializing || _state == null)
+                return;
+
+            bool useLogonTask = AutostartTaskOnlyCheckBox.IsChecked == true;
+            if (useLogonTask == _state.Settings.UseLogonTask)
+                return;
+
+            _state.Settings.UseLogonTask = useLogonTask;
+
+            // 自動起動が ON のときだけ、登録を新しい方式へ付け替える（OFF なら次に ON にしたとき反映される）
+            if (_state.Settings.AutoStart)
+            {
+                bool ok = StartupManager.SyncAutostartWithSettings(true, useLogonTask);
+                if (!ok)
+                {
+                    // 切替失敗時は元の方式に戻す（設定と実際の登録がずれないように）
+                    _isInitializing = true;
+                    _state.Settings.UseLogonTask = !useLogonTask;
+                    AutostartTaskOnlyCheckBox.IsChecked = !useLogonTask;
+                    _isInitializing = false;
+                    return;
+                }
+            }
+
             _state.Settings.Save();
             RefreshAutostartInfo();
         }

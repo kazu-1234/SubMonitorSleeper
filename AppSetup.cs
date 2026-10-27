@@ -27,7 +27,8 @@ namespace SubMonitorSleeper
             CloseBehavior = WindowCloseBehavior.KeepRunning,
             UseTray = true,
             UseResumeMonitor = true,
-            SyncAutostart = StartupManager.SyncAutostartWithSettings,
+            // 共通部は終了時の掃除（false）にだけ使うので、方式の引数は既定値でよい（SPM と同じ）
+            SyncAutostart = enable => StartupManager.SyncAutostartWithSettings(enable),
 
             // 他アプリと衝突しないウィンドウクラス名（AppName を含める）
             SystemEventWindowClassName = "SubMonitorSleeperSystemEventWindow_v2",

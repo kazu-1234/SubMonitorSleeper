@@ -22,11 +22,11 @@ namespace SubMonitorSleeper
                 return true;
             }
 
-            // インストール直後など: 設定に合わせてログオンタスクを現行 exe へ同期して終了
+            // インストール直後など: 設定に合わせてログオンタスク（またはスタートアップ）を現行 exe へ同期して終了
             if (AppBootstrap.HasArg(args, AppBootstrap.SyncAutostartArg))
             {
                 var settings = Settings.Load();
-                StartupManager.SyncAutostartWithSettings(settings.AutoStart);
+                StartupManager.SyncAutostartWithSettings(settings.AutoStart, settings.UseLogonTask);
                 return true;
             }
 

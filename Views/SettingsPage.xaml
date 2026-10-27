@@ -51,6 +51,18 @@
                     </controls:SettingsExpander.Resources>
                     <ToggleSwitch x:Name="AutoStartToggle" Toggled="AutoStartToggle_Toggled" />
                     <controls:SettingsExpander.Items>
+                        <!-- SPM と同じ: チェック ON = ログオンタスク（既定）/ OFF = スタートアップ（レジストリ Run） -->
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                <CheckBox x:Name="AutostartTaskOnlyCheckBox"
+                                          x:Uid="Settings_AutostartTaskOnly"
+                                          VerticalAlignment="Center"
+                                          IsChecked="True"
+                                          Checked="AutostartTaskOnlyCheckBox_Changed"
+                                          Unchecked="AutostartTaskOnlyCheckBox_Changed" />
+                            </controls:SettingsCard.Header>
+                        </controls:SettingsCard>
+
                         <controls:SettingsCard>
                             <controls:SettingsCard.Header>
                                 <StackPanel Spacing="4" MinWidth="0">

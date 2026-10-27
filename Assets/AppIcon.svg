@@ -1,16 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <!-- 全体を 4 下げて、図形の縦中心を 256 の中央に合わせる -->
-  <g transform="translate(0,4)">
-    <!-- 左：点いているメインモニター（青い画面） -->
-    <rect x="14" y="58" width="104" height="86" rx="8" fill="#3B82F6" stroke="#475569" stroke-width="12"/>
-    <rect x="57" y="150" width="18" height="34" fill="#475569"/>
-    <rect x="32" y="180" width="68" height="16" rx="8" fill="#475569"/>
-    <!-- 右：消えているサブモニター（暗い画面に三日月） -->
-    <rect x="138" y="58" width="104" height="86" rx="8" fill="#0F172A" stroke="#475569" stroke-width="12"/>
-    <rect x="181" y="150" width="18" height="34" fill="#475569"/>
-    <rect x="156" y="180" width="68" height="16" rx="8" fill="#475569"/>
-    <!-- 三日月：黄色の円に画面色の円を重ねて欠けさせる -->
-    <circle cx="188" cy="99" r="24" fill="#FACC15"/>
-    <circle cx="199" cy="87" r="21" fill="#0F172A"/>
-  </g>
+  <!-- 画面：横幅いっぱいの 1 台。枠は 16 と太めにして、16px に縮小しても線が残るようにする
+       （stroke は線の中心で描かれるため、外形 4〜252 / 16〜190 になるよう 8 内側に置く） -->
+  <rect x="12" y="24" width="232" height="158" rx="12" fill="#0F172A" stroke="#475569" stroke-width="16"/>
+  <!-- 首と台座：モニターだと分かる最小限の大きさ -->
+  <rect x="114" y="190" width="28" height="36" fill="#475569"/>
+  <rect x="70" y="220" width="116" height="22" rx="11" fill="#475569"/>
+  <!-- 三日月：黄色の円に画面色の円を重ねて欠けさせる。欠けさせる円は枠（内側の上端 y=32）にかからない大きさにする -->
+  <circle cx="128" cy="103" r="58" fill="#FACC15"/>
+  <circle cx="152" cy="86" r="46" fill="#0F172A"/>
 </svg>

@@ -37,6 +37,12 @@ namespace SubMonitorSleeper
         /// <summary>ログオンタスクによる自動起動。</summary>
         public bool AutoStart { get; set; }
 
+        /// <summary>
+        /// true: ログオンタスクで起動（既定）。
+        /// false: スタートアップ（レジストリ Run）に登録。
+        /// </summary>
+        public bool UseLogonTask { get; set; } = true;
+
         /// <summary>消灯時に D6 へ書く値（4 = スタンバイ / 5 = 電源オフ）。それ以外の値は 4 として扱う。</summary>
         public uint PowerOffValue { get; set; } = AppConstants.DefaultPowerOffValue;
 

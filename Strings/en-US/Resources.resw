@@ -289,4 +289,10 @@
   <data name="Ddc_VerifyFailed" xml:space="preserve">
     <value>Could not confirm the monitor power state</value>
   </data>
+  <data name="Settings_AutostartTaskOnly.Content" xml:space="preserve">
+    <value>Run as a logon task instead of registering for Startup</value>
+  </data>
+  <data name="Settings_AutostartMode_StartupShort" xml:space="preserve">
+    <value>Startup</value>
+  </data>
 </root>
