@@ -295,4 +295,73 @@
   <data name="Settings_AutostartMode_StartupShort" xml:space="preserve">
     <value>Startup</value>
   </data>
+  <data name="Settings_TargetMonitor.Text" xml:space="preserve">
+    <value>Target monitor</value>
+  </data>
+  <data name="Settings_TargetMonitor_Auto" xml:space="preserve">
+    <value>Automatic (non-primary)</value>
+  </data>
+  <data name="Settings_TargetMonitor_ItemFormat" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="Settings_TargetMonitor_PrimarySuffix" xml:space="preserve">
+    <value> (primary)</value>
+  </data>
+  <data name="Settings_TargetMonitor_Disconnected" xml:space="preserve">
+    <value>Disconnected monitor</value>
+  </data>
+  <data name="Settings_PowerOffValue.Text" xml:space="preserve">
+    <value>Turn-off value</value>
+  </data>
+  <data name="Settings_PowerOffValue_Standby" xml:space="preserve">
+    <value>4 (Standby)</value>
+  </data>
+  <data name="Settings_PowerOffValue_Off" xml:space="preserve">
+    <value>5 (Power off)</value>
+  </data>
+  <data name="Settings_Hotkey.Text" xml:space="preserve">
+    <value>Hotkey</value>
+  </data>
+  <data name="Settings_Hotkey_Capturing" xml:space="preserve">
+    <value>Press keys…</value>
+  </data>
+  <data name="Settings_Hotkey_NeedModifier" xml:space="preserve">
+    <value>Combine with Ctrl / Alt / Shift / Win</value>
+  </data>
+  <data name="Settings_Hotkey_RegisterFailed" xml:space="preserve">
+    <value>Could not register (in use by another app)</value>
+  </data>
+  <data name="Settings_WaitTime.Text" xml:space="preserve">
+    <value>Wait time</value>
+  </data>
+  <data name="Settings_WaitTime_None" xml:space="preserve">
+    <value>None (no automatic turn-off)</value>
+  </data>
+  <data name="Settings_WaitTime_Hours" xml:space="preserve">
+    <value>{0} h</value>
+  </data>
+  <data name="Settings_WaitTime_Minutes" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="Settings_WaitTime_Seconds" xml:space="preserve">
+    <value>{0} s</value>
+  </data>
+  <data name="Settings_WaitTime_Ac" xml:space="preserve">
+    <value>{0} (AC power)</value>
+  </data>
+  <data name="Settings_WaitTime_Dc" xml:space="preserve">
+    <value>{0} (battery)</value>
+  </data>
+  <data name="Tray_Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Tray_HotkeyFailedTitle" xml:space="preserve">
+    <value>Could not register the hotkey</value>
+  </data>
+  <data name="Tray_HotkeyFailedBody" xml:space="preserve">
+    <value>{0} is in use by another app</value>
+  </data>
+  <data name="Ddc_AutoPaused" xml:space="preserve">
+    <value>Automatic turn-off has been paused</value>
+  </data>
 </root>

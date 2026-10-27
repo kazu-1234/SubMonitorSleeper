@@ -295,4 +295,73 @@
   <data name="Settings_AutostartMode_StartupShort" xml:space="preserve">
     <value>スタートアップ</value>
   </data>
+  <data name="Settings_TargetMonitor.Text" xml:space="preserve">
+    <value>対象モニター</value>
+  </data>
+  <data name="Settings_TargetMonitor_Auto" xml:space="preserve">
+    <value>自動（メイン以外）</value>
+  </data>
+  <data name="Settings_TargetMonitor_ItemFormat" xml:space="preserve">
+    <value>{0}（{1}）</value>
+  </data>
+  <data name="Settings_TargetMonitor_PrimarySuffix" xml:space="preserve">
+    <value>（メイン）</value>
+  </data>
+  <data name="Settings_TargetMonitor_Disconnected" xml:space="preserve">
+    <value>未接続のモニター</value>
+  </data>
+  <data name="Settings_PowerOffValue.Text" xml:space="preserve">
+    <value>消灯時の値</value>
+  </data>
+  <data name="Settings_PowerOffValue_Standby" xml:space="preserve">
+    <value>4（スタンバイ）</value>
+  </data>
+  <data name="Settings_PowerOffValue_Off" xml:space="preserve">
+    <value>5（電源オフ）</value>
+  </data>
+  <data name="Settings_Hotkey.Text" xml:space="preserve">
+    <value>ホットキー</value>
+  </data>
+  <data name="Settings_Hotkey_Capturing" xml:space="preserve">
+    <value>キーを入力…</value>
+  </data>
+  <data name="Settings_Hotkey_NeedModifier" xml:space="preserve">
+    <value>Ctrl / Alt / Shift / Win と組み合わせてください</value>
+  </data>
+  <data name="Settings_Hotkey_RegisterFailed" xml:space="preserve">
+    <value>登録できませんでした（他のアプリが使用中）</value>
+  </data>
+  <data name="Settings_WaitTime.Text" xml:space="preserve">
+    <value>待ち時間</value>
+  </data>
+  <data name="Settings_WaitTime_None" xml:space="preserve">
+    <value>なし（自動消灯しない）</value>
+  </data>
+  <data name="Settings_WaitTime_Hours" xml:space="preserve">
+    <value>{0} 時間</value>
+  </data>
+  <data name="Settings_WaitTime_Minutes" xml:space="preserve">
+    <value>{0} 分</value>
+  </data>
+  <data name="Settings_WaitTime_Seconds" xml:space="preserve">
+    <value>{0} 秒</value>
+  </data>
+  <data name="Settings_WaitTime_Ac" xml:space="preserve">
+    <value>{0}（AC 電源）</value>
+  </data>
+  <data name="Settings_WaitTime_Dc" xml:space="preserve">
+    <value>{0}（バッテリー）</value>
+  </data>
+  <data name="Tray_Pause" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
+  <data name="Tray_HotkeyFailedTitle" xml:space="preserve">
+    <value>ホットキーを登録できませんでした</value>
+  </data>
+  <data name="Tray_HotkeyFailedBody" xml:space="preserve">
+    <value>{0} は他のアプリが使用中です</value>
+  </data>
+  <data name="Ddc_AutoPaused" xml:space="preserve">
+    <value>自動消灯を一時停止しました</value>
+  </data>
 </root>

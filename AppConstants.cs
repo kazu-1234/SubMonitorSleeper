@@ -53,5 +53,31 @@ namespace SubMonitorSleeper
         /// それを復帰と取り違えてすぐ点け直してしまうのを防ぐ。
         /// </summary>
         public const int ResumeIgnoreAfterOffSeconds = 10;
+
+        // ───────── 自動判定（使っていないかの監視） ─────────
+
+        /// <summary>サブ上のウィンドウ・カーソル位置を調べる間隔（ms）。短いほど反応が速いが CPU を使う。</summary>
+        public const int PollIntervalMs = 500;
+
+        /// <summary>手動点灯（トレイ・ホットキー・カーソル進入・ウィンドウ出現）の後、自動消灯しない秒数。</summary>
+        public const int ManualOnGraceSeconds = 60;
+
+        /// <summary>Windows の「画面をオフにする」時間を読み直す間隔（秒）。設定変更・AC/バッテリー切替への追従用。</summary>
+        public const int PowerTimeoutRefreshSeconds = 30;
+
+        /// <summary>ウィンドウとサブの重なりがこのピクセル数以上（縦横とも）あれば「サブ上にある」とみなす。</summary>
+        public const int WindowOverlapMinPixels = 1;
+
+        // ───────── ホットキー ─────────
+
+        /// <summary>RegisterHotKey の修飾キー（MOD_ALT = 1, MOD_CONTROL = 2, MOD_SHIFT = 4, MOD_WIN = 8）。</summary>
+        public const uint ModAlt = 0x0001;
+        public const uint ModControl = 0x0002;
+        public const uint ModShift = 0x0004;
+        public const uint ModWin = 0x0008;
+
+        /// <summary>既定のホットキー Ctrl+Alt+M（M の仮想キーコードは 0x4D）。</summary>
+        public const uint DefaultHotkeyModifiers = ModControl | ModAlt;
+        public const uint DefaultHotkeyVirtualKey = 0x4D;
     }
 }

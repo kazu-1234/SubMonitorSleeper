@@ -13,6 +13,50 @@
 
                 <TextBlock x:Uid="Settings_SectionMonitor" Style="{StaticResource SettingsSectionHeaderFirstStyle}" />
 
+                <!-- 対象モニター: 先頭は「自動（メイン以外）」、続いて接続中のモニター -->
+                <controls:SettingsCard>
+                    <controls:SettingsCard.Header>
+                        <TextBlock x:Uid="Settings_TargetMonitor" Style="{StaticResource CardHeaderTextStyle}" />
+                    </controls:SettingsCard.Header>
+                    <ComboBox x:Name="TargetMonitorComboBox"
+                              MinWidth="{StaticResource SettingsComboBoxMinWidth}"
+                              SelectionChanged="TargetMonitorComboBox_SelectionChanged" />
+                </controls:SettingsCard>
+
+                <!-- 消灯時に D6 へ書く値 -->
+                <controls:SettingsCard>
+                    <controls:SettingsCard.Header>
+                        <TextBlock x:Uid="Settings_PowerOffValue" Style="{StaticResource CardHeaderTextStyle}" />
+                    </controls:SettingsCard.Header>
+                    <ComboBox x:Name="PowerOffValueComboBox"
+                              MinWidth="{StaticResource SettingsComboBoxMinWidth}"
+                              SelectionChanged="PowerOffValueComboBox_SelectionChanged" />
+                </controls:SettingsCard>
+
+                <!-- ホットキー: ボタンを押すとキー入力の受付状態になる。説明欄は入力中・失敗の表示用 -->
+                <controls:SettingsCard>
+                    <controls:SettingsCard.Header>
+                        <StackPanel Spacing="4" MinWidth="0">
+                            <TextBlock x:Uid="Settings_Hotkey" Style="{StaticResource CardHeaderTextStyle}" />
+                            <TextBlock x:Name="HotkeyStatusText" Style="{StaticResource CardDescriptionTextStyle}" />
+                        </StackPanel>
+                    </controls:SettingsCard.Header>
+                    <Button x:Name="HotkeyButton"
+                            MinWidth="{StaticResource SettingsComboBoxMinWidth}"
+                            Click="HotkeyButton_Click"
+                            PreviewKeyDown="HotkeyButton_PreviewKeyDown"
+                            PreviewKeyUp="HotkeyButton_PreviewKeyUp"
+                            LostFocus="HotkeyButton_LostFocus" />
+                </controls:SettingsCard>
+
+                <!-- 待ち時間: Windows の「画面をオフにする」時間（読み取り専用） -->
+                <controls:SettingsCard>
+                    <controls:SettingsCard.Header>
+                        <TextBlock x:Uid="Settings_WaitTime" Style="{StaticResource CardHeaderTextStyle}" />
+                    </controls:SettingsCard.Header>
+                    <TextBlock x:Name="WaitTimeText" VerticalAlignment="Center" />
+                </controls:SettingsCard>
+
                 <!-- テスト消灯: D6 で消灯 → 数秒後に自動で点灯（DDC/CI が効くかの確認用）。説明欄には対象モニターを出す -->
                 <controls:SettingsCard>
                     <controls:SettingsCard.Header>

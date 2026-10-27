@@ -43,6 +43,18 @@ namespace SubMonitorSleeper
         /// </summary>
         public bool UseLogonTask { get; set; } = true;
 
+        /// <summary>
+        /// 対象モニターの固定 ID（EDID 由来のデバイスパス）。null なら自動（メイン以外の先頭）。
+        /// \\.\DISPLAYn は再起動で番号が変わることがあるので、変わらない ID を保存する。
+        /// </summary>
+        public string? TargetMonitorDevicePath { get; set; }
+
+        /// <summary>点灯・消灯を切り替えるホットキーの修飾キー（AppConstants.ModControl などの組み合わせ）。</summary>
+        public uint HotkeyModifiers { get; set; } = AppConstants.DefaultHotkeyModifiers;
+
+        /// <summary>ホットキーの仮想キーコード（既定は M = 0x4D）。</summary>
+        public uint HotkeyVirtualKey { get; set; } = AppConstants.DefaultHotkeyVirtualKey;
+
         /// <summary>消灯時に D6 へ書く値（4 = スタンバイ / 5 = 電源オフ）。それ以外の値は 4 として扱う。</summary>
         public uint PowerOffValue { get; set; } = AppConstants.DefaultPowerOffValue;
 

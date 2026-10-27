@@ -13,6 +13,8 @@
             <x:Double x:Key="PageContentMaxWidth">1000</x:Double>
             <x:Double x:Key="SettingsCardSpacing">4</x:Double>
             <x:Double x:Key="ControlRowSpacing">12</x:Double>
+            <!-- 設定画面の対象モニター・消灯値の ComboBox とホットキーボタンの最小幅（モニター名が切れないように） -->
+            <x:Double x:Key="SettingsComboBoxMinWidth">220</x:Double>
 
             <Style x:Key="PageHostScrollViewerStyle" TargetType="ScrollViewer">
                 <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
