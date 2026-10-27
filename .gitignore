@@ -1,0 +1,35 @@
+# Build
+bin/
+obj/
+publish/
+dist/
+*.exe
+*.msix
+*.appx
+*.user
+*.suo
+
+# Visual Studio
+.vs/
+*.sln.docstates
+
+# Backup / temp
+*.bak
+*.tmp
+*.log
+
+# Debug symbols (配布不要)
+*.pdb
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# IDE / エディタ（リポジトリ非公開）
+.cursor/
+
+# アプリ設定（%APPDATA% 側に保存されるため、リポジトリには置かない）
+settings.json
+
+# ローカル専用の作業履歴（push しない）
+version_history.txt

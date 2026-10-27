@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>SubMonitorSleeper</value>
+  </data>
+  <data name="Nav_Info.Content" xml:space="preserve">
+    <value>情報</value>
+  </data>
+  <data name="Nav_Settings.Content" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Page_Info.Text" xml:space="preserve">
+    <value>情報</value>
+  </data>
+  <data name="Page_Settings.Text" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Info_SectionUpdate.Text" xml:space="preserve">
+    <value>アップデート</value>
+  </data>
+  <data name="Info_UpdateDesc.Text" xml:space="preserve">
+    <value>GitHub リリースから最新版を確認します</value>
+  </data>
+  <data name="Info_LastUpdateCheck_Format" xml:space="preserve">
+    <value>最終確認日時 {0}</value>
+  </data>
+  <data name="Info_LastUpdateCheck_Never" xml:space="preserve">
+    <value>最終確認日時: 未確認</value>
+  </data>
+  <data name="Info_LastUpdateCheck_DateFormat" xml:space="preserve">
+    <value>yyyy/MM/dd ddd HH:mm:ss</value>
+  </data>
+  <data name="Info_AutoUpdateLabel.Text" xml:space="preserve">
+    <value>自動で最新版を確認</value>
+  </data>
+  <data name="Info_AutoUpdateDesc.Text" xml:space="preserve">
+    <value>起動時に更新を確認し、新しいバージョンがあれば確認後にインストールします</value>
+  </data>
+  <data name="Update_StartupDialogTitle" xml:space="preserve">
+    <value>更新あり</value>
+  </data>
+  <data name="Update_StartupDialogContent" xml:space="preserve">
+    <value>{0}&#x0a;&#x0a;今すぐ更新しますか？</value>
+  </data>
+  <data name="Update_StartupDialogInstall" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="Update_StartupDialogLater" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
+  <data name="Info_CheckUpdate.Content" xml:space="preserve">
+    <value>更新を確認</value>
+  </data>
+  <data name="Info_InstallUpdate.Content" xml:space="preserve">
+    <value>インストーラーをダウンロードして実行</value>
+  </data>
+  <data name="Info_SectionDisclaimer.Text" xml:space="preserve">
+    <value>免責事項</value>
+  </data>
+  <data name="Info_AboutDescription.Text" xml:space="preserve">
+    <value>デュアルモニター環境で、サブモニターを DDC/CI（VCP 0xD6）で消灯・点灯する常駐アプリです。ウィンドウを閉じてもバックグラウンド動作を続けます。</value>
+  </data>
+  <data name="Info_DisclaimerText.Text" xml:space="preserve">
+    <value>本ソフトウェアは現状有姿で提供されます。本ソフトウェアの利用により生じたいかなる損害（データの損失、機器の故障、業務の中断、逸失利益などを含みますがこれらに限りません）についても、開発者は一切の責任を負いません。本ソフトウェアの使用はすべて自己責任で行ってください。詳細はインストール時に表示される使用許諾および MIT License を参照してください。</value>
+  </data>
+  <data name="Settings_SectionAppearance.Text" xml:space="preserve">
+    <value>外観</value>
+  </data>
+  <data name="Settings_Theme.Text" xml:space="preserve">
+    <value>テーマ</value>
+  </data>
+  <data name="Settings_ThemeDesc.Text" xml:space="preserve">
+    <value>システム連動 / ライト / ダーク</value>
+  </data>
+  <data name="Settings_Theme_System" xml:space="preserve">
+    <value>システムの設定に従う</value>
+  </data>
+  <data name="Settings_Theme_Light" xml:space="preserve">
+    <value>常にライト</value>
+  </data>
+  <data name="Settings_Theme_Dark" xml:space="preserve">
+    <value>常にダーク</value>
+  </data>
+  <data name="Settings_SectionStartup.Text" xml:space="preserve">
+    <value>起動設定</value>
+  </data>
+  <data name="Settings_AutoStart.Text" xml:space="preserve">
+    <value>ログオン時に自動起動</value>
+  </data>
+  <data name="Settings_AutoStartDesc.Text" xml:space="preserve">
+    <value>Windows にサインインしたとき、バックグラウンドで起動します</value>
+  </data>
+  <data name="Settings_AutoStartExpander.Header" xml:space="preserve">
+    <value>Windows の開始時に SubMonitorSleeper を実行</value>
+  </data>
+  <data name="Settings_RefreshAutostart.Content" xml:space="preserve">
+    <value>自動起動の情報を更新</value>
+  </data>
+  <data name="Settings_AutostartType_Format" xml:space="preserve">
+    <value>種類: {0}</value>
+  </data>
+  <data name="Settings_AutostartPath_Format" xml:space="preserve">
+    <value>パス: {0}</value>
+  </data>
+  <data name="Settings_AutostartMode_TaskShort" xml:space="preserve">
+    <value>タスク</value>
+  </data>
+  <data name="Settings_Autostart_NotRegistered" xml:space="preserve">
+    <value>未登録</value>
+  </data>
+  <data name="Settings_AutostartMode_Label.Text" xml:space="preserve">
+    <value>登録方式</value>
+  </data>
+  <data name="Settings_AutostartMode_Task" xml:space="preserve">
+    <value>ログオン時タスク</value>
+  </data>
+  <data name="Settings_AutostartMode_Disabled" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="Settings_AutostartPath_Label.Text" xml:space="preserve">
+    <value>登録コマンド</value>
+  </data>
+  <data name="Toggle_On" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="Toggle_Off" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="Settings_HideTrayIcon.Content" xml:space="preserve">
+    <value>タスクトレイアイコンを表示しない</value>
+  </data>
+  <data name="Version_Format" xml:space="preserve">
+    <value>現在のバージョン: v{0}</value>
+  </data>
+  <data name="Update_NotConfigured" xml:space="preserve">
+    <value>更新確認 URL が設定されていません</value>
+  </data>
+  <data name="Update_FetchFailed" xml:space="preserve">
+    <value>リリース情報の取得に失敗しました</value>
+  </data>
+  <data name="Update_Available" xml:space="preserve">
+    <value>新しいバージョン v{0} が利用可能です（現在: v{1}）</value>
+  </data>
+  <data name="Update_UpToDate" xml:space="preserve">
+    <value>v{0} は最新です</value>
+  </data>
+  <data name="Update_Error" xml:space="preserve">
+    <value>更新確認エラー: {0}</value>
+  </data>
+  <data name="Update_AvailableTitle" xml:space="preserve">
+    <value>更新あり</value>
+  </data>
+  <data name="Update_OpenRelease" xml:space="preserve">
+    <value>リリースページを開く</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Update_DownloadReady" xml:space="preserve">
+    <value>バージョン {0} のインストーラーをダウンロードできます</value>
+  </data>
+  <data name="Update_Preparing" xml:space="preserve">
+    <value>準備中...</value>
+  </data>
+  <data name="Update_Downloading" xml:space="preserve">
+    <value>ダウンロード中...</value>
+  </data>
+  <data name="Update_LaunchingSetup" xml:space="preserve">
+    <value>インストーラーを起動しています...</value>
+  </data>
+  <data name="Update_SetupStarted" xml:space="preserve">
+    <value>インストーラーを起動しました。画面の指示に従って更新してください。</value>
+  </data>
+  <data name="Update_SetupRequired" xml:space="preserve">
+    <value>Inno Setup の setup.exe が見つかりません。Release ページから手動で更新してください。</value>
+  </data>
+  <data name="Update_Failed" xml:space="preserve">
+    <value>更新失敗: {0}</value>
+  </data>
+  <data name="Tray_OpenSettings" xml:space="preserve">
+    <value>設定を開く</value>
+  </data>
+  <data name="Tray_Exit" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="Tray_StartupReadyTitle" xml:space="preserve">
+    <value>常駐準備完了</value>
+  </data>
+  <data name="Tray_StartupReadyBody" xml:space="preserve">
+    <value>スリープ復帰の監視を開始しました</value>
+  </data>
+  <data name="Settings_SectionMonitor.Text" xml:space="preserve">
+    <value>サブモニター</value>
+  </data>
+  <data name="Settings_TestOff.Text" xml:space="preserve">
+    <value>テスト消灯</value>
+  </data>
+  <data name="Settings_TestOffButton.Content" xml:space="preserve">
+    <value>実行</value>
+  </data>
+  <data name="Settings_TargetMonitor_Format" xml:space="preserve">
+    <value>対象: {0}（{1} × {2}）</value>
+  </data>
+  <data name="Settings_TargetMonitor_NotFound" xml:space="preserve">
+    <value>対象: サブモニターが見つかりません</value>
+  </data>
+  <data name="Tray_TurnOffNow" xml:space="preserve">
+    <value>今すぐ消す</value>
+  </data>
+  <data name="Tray_TurnOnNow" xml:space="preserve">
+    <value>今すぐ点ける</value>
+  </data>
+  <data name="Tray_DdcOffFailedTitle" xml:space="preserve">
+    <value>消灯できませんでした</value>
+  </data>
+  <data name="Tray_DdcOnFailedTitle" xml:space="preserve">
+    <value>点灯できませんでした</value>
+  </data>
+  <data name="Ddc_MonitorNotFound" xml:space="preserve">
+    <value>サブモニターが見つかりません</value>
+  </data>
+  <data name="Ddc_NoPhysicalMonitor" xml:space="preserve">
+    <value>DDC/CI でモニターを開けませんでした</value>
+  </data>
+  <data name="Ddc_SetFailed" xml:space="preserve">
+    <value>モニターが D6 の命令に応答しませんでした</value>
+  </data>
+  <data name="Ddc_VerifyFailed" xml:space="preserve">
+    <value>モニターの電源状態を確認できませんでした</value>
+  </data>
+</root>

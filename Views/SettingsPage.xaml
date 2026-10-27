@@ -1,0 +1,83 @@
+<Page
+    x:Class="SubMonitorSleeper.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:views="using:SubMonitorSleeper.Views"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch">
+    <views:PageScrollHost>
+        <Grid x:Name="ContentArea">
+            <StackPanel Style="{StaticResource PageBaseStackPanelStyle}">
+                <TextBlock x:Uid="Page_Settings" Style="{StaticResource PageTitleTextStyle}" />
+
+                <TextBlock x:Uid="Settings_SectionMonitor" Style="{StaticResource SettingsSectionHeaderFirstStyle}" />
+
+                <!-- テスト消灯: D6 で消灯 → 数秒後に自動で点灯（DDC/CI が効くかの確認用）。説明欄には対象モニターを出す -->
+                <controls:SettingsCard>
+                    <controls:SettingsCard.Header>
+                        <StackPanel Spacing="4" MinWidth="0">
+                            <TextBlock x:Uid="Settings_TestOff" Style="{StaticResource CardHeaderTextStyle}" />
+                            <TextBlock x:Name="TargetMonitorText" Style="{StaticResource CardDescriptionTextStyle}" />
+                        </StackPanel>
+                    </controls:SettingsCard.Header>
+                    <Button x:Name="TestOffButton"
+                            x:Uid="Settings_TestOffButton"
+                            Click="TestOffButton_Click" />
+                </controls:SettingsCard>
+
+                <TextBlock x:Uid="Settings_SectionAppearance" Style="{StaticResource SettingsSectionHeaderStyle}" />
+
+                <controls:SettingsCard>
+                    <controls:SettingsCard.Header>
+                        <StackPanel Spacing="4" MinWidth="0">
+                            <TextBlock x:Uid="Settings_Theme" Style="{StaticResource CardHeaderTextStyle}" />
+                            <TextBlock x:Uid="Settings_ThemeDesc" Style="{StaticResource CardDescriptionTextStyle}" />
+                        </StackPanel>
+                    </controls:SettingsCard.Header>
+                    <ComboBox x:Name="ThemeComboBox"
+                              Style="{StaticResource CompactComboBoxThemeStyle}"
+                              SelectionChanged="ThemeComboBox_SelectionChanged" />
+                </controls:SettingsCard>
+
+                <TextBlock x:Uid="Settings_SectionStartup" Style="{StaticResource SettingsSectionHeaderStyle}" />
+
+                <controls:SettingsExpander x:Name="AutoStartExpander"
+                                           x:Uid="Settings_AutoStartExpander"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.Resources>
+                        <Thickness x:Key="SettingsExpanderItemPadding">16,8,16,8</Thickness>
+                        <Thickness x:Key="ClickableSettingsExpanderItemPadding">16,8,16,8</Thickness>
+                    </controls:SettingsExpander.Resources>
+                    <ToggleSwitch x:Name="AutoStartToggle" Toggled="AutoStartToggle_Toggled" />
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                <StackPanel Spacing="4" MinWidth="0">
+                                    <TextBlock x:Name="AutostartTypeLine" FontSize="13" TextWrapping="Wrap" />
+                                    <TextBlock x:Name="AutostartPathLine"
+                                               FontSize="13"
+                                               TextWrapping="Wrap"
+                                               IsTextSelectionEnabled="True" />
+                                </StackPanel>
+                            </controls:SettingsCard.Header>
+                            <Button x:Name="RefreshAutostartButton"
+                                    x:Uid="Settings_RefreshAutostart"
+                                    Click="RefreshAutostartButton_Click" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                <CheckBox x:Name="HideTrayIconCheckBox"
+                                          x:Uid="Settings_HideTrayIcon"
+                                          VerticalAlignment="Center"
+                                          Checked="HideTrayIconCheckBox_Changed"
+                                          Unchecked="HideTrayIconCheckBox_Changed" />
+                            </controls:SettingsCard.Header>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+            </StackPanel>
+        </Grid>
+    </views:PageScrollHost>
+</Page>
