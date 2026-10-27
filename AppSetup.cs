@@ -20,9 +20,8 @@ namespace SubMonitorSleeper
             AppName = AppName,
             InstanceNameVersion = "v1",
 
-            // リリース後に GitHub Releases API URL を設定する（未設定なら更新確認は「未設定」表示）
-            // 例: https://api.github.com/repos/owner/repo/releases/latest
-            LatestReleaseApiUrl = null,
+            // GitHub Releases の最新版を確認し、添付の *-setup.exe で更新する（SPM と同じ方式）
+            LatestReleaseApiUrl = AppConstants.GitHubApiUrl,
 
             CloseBehavior = WindowCloseBehavior.KeepRunning,
             UseTray = true,

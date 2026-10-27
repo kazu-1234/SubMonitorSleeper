@@ -78,3 +78,8 @@ if (-not (Test-Path $setup)) {
 $setupBytes = (Get-Item $setup).Length
 $setupMb = [math]::Round($setupBytes / 1MB, 1)
 Write-Host ("OK: {0} ({1} MB)" -f $setup, $setupMb)
+
+# SPM と同じく、GitHub Releases に添付しやすいようリポジトリ直下にもコピーする（*.exe は .gitignore で除外）
+$rootCopy = Join-Path $root ("SubMonitorSleeper-v{0}-win-x64-setup.exe" -f $version)
+Copy-Item $setup $rootCopy -Force
+Write-Host ("copied: {0}" -f $rootCopy)

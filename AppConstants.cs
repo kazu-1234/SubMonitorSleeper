@@ -5,6 +5,14 @@ namespace SubMonitorSleeper
     /// </summary>
     internal static class AppConstants
     {
+        // ───────── 更新確認（GitHub Releases） ─────────
+
+        /// <summary>
+        /// 最新リリースの API（SPM と同じ方式）。リリースに添付した *-setup.exe（Inno Setup）を
+        /// Info ページから取得・実行して更新する。
+        /// </summary>
+        public const string GitHubApiUrl = "https://api.github.com/repos/kazu-1234/SubMonitorSleeper/releases/latest";
+
         // ───────── DDC/CI（VCP コード 0xD6 = Power Mode） ─────────
 
         /// <summary>VCP コード 0xD6（Power Mode）。MCCS 規格で電源状態を表す。</summary>
