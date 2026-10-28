@@ -35,13 +35,24 @@ if (Test-Path $publishDir) {
     Remove-Item -Recurse -Force $publishDir
 }
 
+# Release の中間ファイルを消して必ずコンパイルし直す（DebugType を変えても差分ビルドでは古い DLL が使い回され、
+# .pdb のパスが埋め込まれたまま配布されてしまうため）
+foreach ($objRelease in @((Join-Path $root "obj\x64\Release"), (Join-Path $root "Shared\obj\Release"))) {
+    if (Test-Path $objRelease) {
+        Remove-Item -Recurse -Force $objRelease
+    }
+}
+
 dotnet publish $csproj `
     -c Release `
     -p:Platform=x64 `
     -r win-x64 `
     --self-contained true `
     -p:PublishSingleFile=false `
+    -p:DebugType=none `
     -o $publishDir
+# DebugType=none: 既定だと DLL に .pdb の絶対パス（C:\Users\<ユーザー名>\...）が埋め込まれ、配布物からユーザー名が分かってしまう。
+# 配布物にはデバッグ情報を入れないので、パスごと出力しない
 
 if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish failed (exit=$LASTEXITCODE)"
