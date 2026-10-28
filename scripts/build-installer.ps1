@@ -8,7 +8,7 @@ chcp 65001 | Out-Null
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
-$version = "0.5.0"
+$version = "0.5.1"
 $publishDir = Join-Path $root "dist\folder"
 $iss = Join-Path $root "installer\SubMonitorSleeper.iss"
 $outDir = Join-Path $root "dist\installer"
@@ -47,6 +47,13 @@ if ($LASTEXITCODE -ne 0) {
 $exe = Join-Path $publishDir $exeName
 if (-not (Test-Path $exe)) {
     throw "$exeName missing in publish output: $publishDir"
+}
+
+# アプリ本体の .pri（XAML と文言）が無いと、インストール版が起動直後に何も出さず終了する。
+# csproj の CopyAppPriToPublishDir が効いているかをここで確かめ、無ければインストーラを作らずに止める
+$pri = Join-Path $publishDir ([IO.Path]::ChangeExtension((Split-Path $exe -Leaf), ".pri"))
+if (-not (Test-Path $pri)) {
+    throw "$(Split-Path $pri -Leaf) missing in publish output (app would exit on launch): $publishDir"
 }
 
 Get-ChildItem $publishDir -Recurse -File | Where-Object {
