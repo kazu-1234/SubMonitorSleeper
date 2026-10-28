@@ -190,6 +190,9 @@
   <data name="Settings_HideTrayIcon.Content" xml:space="preserve">
     <value>Hide the tray icon</value>
   </data>
+  <data name="Settings_ShowStartupNotification.Content" xml:space="preserve">
+    <value>Show a notification at startup</value>
+  </data>
   <data name="Version_Format" xml:space="preserve">
     <value>Current version: v{0}</value>
   </data>

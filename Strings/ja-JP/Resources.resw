@@ -190,6 +190,9 @@
   <data name="Settings_HideTrayIcon.Content" xml:space="preserve">
     <value>タスクトレイアイコンを表示しない</value>
   </data>
+  <data name="Settings_ShowStartupNotification.Content" xml:space="preserve">
+    <value>起動時に通知を表示する</value>
+  </data>
   <data name="Version_Format" xml:space="preserve">
     <value>現在のバージョン: v{0}</value>
   </data>
