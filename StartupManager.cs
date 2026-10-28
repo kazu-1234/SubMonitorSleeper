@@ -22,8 +22,42 @@ public static class StartupManager
 
     /// <param name="enable">自動起動するか。false ならタスク・Run の両方を消す。</param>
     /// <param name="useLogonTask">true: ログオンタスク / false: スタートアップ（レジストリ Run）。</param>
-    public static bool SyncAutostartWithSettings(bool enable, bool useLogonTask = true) =>
-        AutostartService.Sync(Identity, enable, useLogonTask);
+    public static bool SyncAutostartWithSettings(bool enable, bool useLogonTask = true)
+    {
+#if DEBUG
+        // Debug ビルドでは bin\Debug の exe を自動起動に登録しない。
+        // 登録すると、ログオン時に Debug 版が常駐し、その横で VS が再ビルドして .pri / XAML を差し替えるため、
+        // 次に画面を開いた瞬間に XAML の読み込みに失敗して落ちる（実際に起きたクラッシュの原因）。
+        // タスク名はインストール版と共通なので、インストール版の登録も書き換えない・消さない。
+        // 例外として、OFF にしたときに「今の Debug exe を指す登録」が残っていれば、その掃除だけは行う。
+        if (enable || !IsRegisteredToCurrentExe())
+        {
+            AppHost.AppendLifetimeLog($"autostart-sync-skipped-debug enable={enable}");
+            return true;
+        }
+#endif
+        return AutostartService.Sync(Identity, enable, useLogonTask);
+    }
+
+#if DEBUG
+    /// <summary>今動いている exe（bin\Debug）を指す登録が、タスクか Run のどちらかに残っているか。</summary>
+    private static bool IsRegisteredToCurrentExe()
+    {
+        string exePath = Environment.ProcessPath ?? string.Empty;
+        if (exePath.Length == 0)
+            return false;
+
+        // 登録コマンドは「"パス" --background」の形なので、パスを含むかで判定する（大文字小文字は無視）
+        foreach (bool preferLogonTask in new[] { true, false })
+        {
+            string? command = GetRegisteredCommand(preferLogonTask);
+            if (command != null && command.Contains(exePath, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
+    }
+#endif
 
     public static bool ApplyAutoStart(bool enable, bool useLogonTask = true) =>
         SyncAutostartWithSettings(enable, useLogonTask);
