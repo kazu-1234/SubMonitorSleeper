@@ -334,6 +334,9 @@
   <data name="Settings_Hotkey_RegisterFailed" xml:space="preserve">
     <value>Could not register (in use by another app)</value>
   </data>
+  <data name="Settings_Hotkey_NotRegistered" xml:space="preserve">
+    <value>This key is not active because another app is using it. Please choose a different key.</value>
+  </data>
   <data name="Settings_Hotkey_None" xml:space="preserve">
     <value>None</value>
   </data>

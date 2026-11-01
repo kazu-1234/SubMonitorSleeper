@@ -1,4 +1,4 @@
-// v0.5.2
+// v0.6.0
 
 using System;
 using System.Collections.Generic;
@@ -34,6 +34,9 @@ namespace SubMonitorSleeper
 
         private IdleMonitor? _idleMonitor;
         private HotkeyService? _hotkey;
+
+        /// <summary>設定画面でキー入力を受け付けている最中か（この間は登録の取り直しをしない）。UI スレッドだけで触る。</summary>
+        private bool _hotkeyCapturing;
 
         /// <summary>今サブが消えている理由（None = 点灯中）。保存はしない（起動時の復旧は SubTurnedOffByApp で行う）。</summary>
         private SubOffKind _offKind = SubOffKind.None;
@@ -102,6 +105,8 @@ namespace SubMonitorSleeper
 
         protected override void OnResumeWatchdogCore()
         {
+            // 点灯の再適用はしない。ホットキーが取れていなければ取り直すだけ（30 秒ごと・UI スレッド）
+            RetryHotkeyRegistration();
         }
 
         /// <summary>
@@ -112,6 +117,9 @@ namespace SubMonitorSleeper
         {
             // 復帰したら「使っていない時間」は最初から数え直す（スリープ中の時間を数えて、復帰直後に消さないため）
             _idleMonitor?.ResetIdleCount();
+
+            // ログオン直後は他の常駐アプリとホットキーの取り合いになりやすいので、復帰のたびにも取り直しを試す
+            RetryHotkeyRegistration();
 
             DateTime now = DateTime.UtcNow;
             lock (_stateGate)
@@ -234,6 +242,20 @@ namespace SubMonitorSleeper
                     Strings.Format("Tray_HotkeyFailedBody", keys),
                     isWarning: true));
             });
+        }
+
+        /// <summary>
+        /// ホットキーが登録できていなければ登録し直す（UI スレッド）。
+        /// 起動時に他のアプリが同じキーを一時的に持っていても、手放された後で効くようにするため。
+        /// 「なし」設定・設定画面で入力中・すでに登録済みなら何もしない。
+        /// </summary>
+        private void RetryHotkeyRegistration()
+        {
+            if (_hotkey == null || _hotkey.IsRegistered || _hotkeyCapturing || _settings.HotkeyVirtualKey == 0)
+                return;
+
+            if (_hotkey.TryRegister(_settings.HotkeyModifiers, _settings.HotkeyVirtualKey))
+                AppendLifetimeLog($"hotkey-registered-retry {HotkeyService.Format(_settings.HotkeyModifiers, _settings.HotkeyVirtualKey)}");
         }
 
         /// <summary>ホットキー: 押すたびに切り替える（消灯中なら点灯、点灯中なら消灯）。UI スレッドで呼ばれる。</summary>
@@ -425,10 +447,17 @@ namespace SubMonitorSleeper
 
         public PowerTimeout GetCurrentTimeout() => PowerTimeoutReader.Read();
 
-        public void BeginHotkeyCapture() => _hotkey?.Unregister();
+        public bool IsHotkeyRegistered => _hotkey?.IsRegistered == true;
+
+        public void BeginHotkeyCapture()
+        {
+            _hotkeyCapturing = true;
+            _hotkey?.Unregister();
+        }
 
         public bool ApplyHotkey(uint modifiers, uint virtualKey)
         {
+            _hotkeyCapturing = false;
             if (_hotkey == null)
                 return false;
 
@@ -445,11 +474,15 @@ namespace SubMonitorSleeper
             return true;
         }
 
-        public void CancelHotkeyCapture() =>
+        public void CancelHotkeyCapture()
+        {
+            _hotkeyCapturing = false;
             _hotkey?.TryRegister(_settings.HotkeyModifiers, _settings.HotkeyVirtualKey);
+        }
 
         public void ClearHotkey()
         {
+            _hotkeyCapturing = false;
             // 修飾キー・キーとも 0 を「なし」として保存する（TryRegister は 0 を登録しないので、取消時も外れたまま）
             _hotkey?.Unregister();
             _settings.HotkeyModifiers = 0;

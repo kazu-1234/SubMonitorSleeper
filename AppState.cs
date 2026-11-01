@@ -29,6 +29,9 @@ namespace SubMonitorSleeper
         /// <summary>今の Windows の「画面をオフにする」時間。</summary>
         PowerTimeout GetCurrentTimeout();
 
+        /// <summary>今のホットキーが実際に登録できていて、押せば効く状態か。</summary>
+        bool IsHotkeyRegistered { get; }
+
         /// <summary>キー入力の受付を始める（今のホットキーを一時的に外す。押すと切り替えが動いてしまうため）。</summary>
         void BeginHotkeyCapture();
 

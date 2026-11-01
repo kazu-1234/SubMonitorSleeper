@@ -30,6 +30,9 @@ namespace SubMonitorSleeper.Services
         /// <summary>ホットキーが押された（UI スレッドで呼ばれる）。</summary>
         public event Action? Pressed;
 
+        /// <summary>今ホットキーを登録できているか（他のアプリが同じ組み合わせを持っていると false のまま）。</summary>
+        public bool IsRegistered => _isRegistered;
+
         /// <summary>UI スレッドで作ること（ウィンドウは作ったスレッドのメッセージループで動くため）。</summary>
         public HotkeyService()
         {

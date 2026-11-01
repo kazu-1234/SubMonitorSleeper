@@ -190,9 +190,15 @@ namespace SubMonitorSleeper.Views
                 return;
 
             // キー 0 は「なし」（ホットキーを使わない）
-            HotkeyButton.Content = _state.Settings.HotkeyVirtualKey == 0
+            bool isNone = _state.Settings.HotkeyVirtualKey == 0;
+            HotkeyButton.Content = isNone
                 ? Strings.Get("Settings_Hotkey_None")
                 : HotkeyService.Format(_state.Settings.HotkeyModifiers, _state.Settings.HotkeyVirtualKey);
+
+            // 設定上はキーがあるのに登録できていない（他のアプリが先に使っている）なら、押しても効かないことを出しておく。
+            // 表示だけ Ctrl+Alt+M のままだと、効かない理由が分からないため
+            bool notWorking = !isNone && _state.SubMonitor?.IsHotkeyRegistered == false;
+            SetHotkeyStatus(notWorking ? Strings.Get("Settings_Hotkey_NotRegistered") : string.Empty);
         }
 
         /// <summary>
@@ -245,7 +251,6 @@ namespace SubMonitorSleeper.Views
                 _swallowNextKeyUp = true;
                 _isCapturingHotkey = false;
                 _state.SubMonitor.ClearHotkey();
-                SetHotkeyStatus(string.Empty);
                 ShowCurrentHotkey();
                 return;
             }
@@ -260,8 +265,10 @@ namespace SubMonitorSleeper.Views
             _swallowNextKeyUp = true;
             _isCapturingHotkey = false;
             bool ok = _state.SubMonitor.ApplyHotkey(modifiers, (uint)e.Key);
-            SetHotkeyStatus(ok ? string.Empty : Strings.Get("Settings_Hotkey_RegisterFailed"));
             ShowCurrentHotkey();
+            // 新しいキーが取れなかったときは、今の状態表示より「その組み合わせは使えない」を優先して出す
+            if (!ok)
+                SetHotkeyStatus(Strings.Get("Settings_Hotkey_RegisterFailed"));
         }
 
         private void HotkeyButton_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
@@ -283,7 +290,6 @@ namespace SubMonitorSleeper.Views
 
             _isCapturingHotkey = false;
             _state?.SubMonitor?.CancelHotkeyCapture();
-            SetHotkeyStatus(string.Empty);
             ShowCurrentHotkey();
         }
 
