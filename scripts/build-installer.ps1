@@ -8,7 +8,7 @@ chcp 65001 | Out-Null
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
-$version = "0.6.0"
+$version = "1.0.0"
 $publishDir = Join-Path $root "dist\folder"
 $iss = Join-Path $root "installer\SubMonitorSleeper.iss"
 $outDir = Join-Path $root "dist\installer"
