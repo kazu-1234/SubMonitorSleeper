@@ -55,7 +55,7 @@ namespace SubMonitorSleeper
         /// <summary>点灯・消灯を切り替えるホットキーの修飾キー（AppConstants.ModControl などの組み合わせ）。</summary>
         public uint HotkeyModifiers { get; set; } = AppConstants.DefaultHotkeyModifiers;
 
-        /// <summary>ホットキーの仮想キーコード（既定は M = 0x4D）。</summary>
+        /// <summary>ホットキーの仮想キーコード（既定は M = 0x4D）。0 は「なし」（登録しない）。</summary>
         public uint HotkeyVirtualKey { get; set; } = AppConstants.DefaultHotkeyVirtualKey;
 
         /// <summary>消灯時に D6 へ書く値（4 = スタンバイ / 5 = 電源オフ）。それ以外の値は 4 として扱う。</summary>

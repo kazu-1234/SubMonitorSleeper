@@ -334,6 +334,12 @@
   <data name="Settings_Hotkey_RegisterFailed" xml:space="preserve">
     <value>Could not register (in use by another app)</value>
   </data>
+  <data name="Settings_Hotkey_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Settings_Hotkey_CaptureHint" xml:space="preserve">
+    <value>Esc to cancel, Delete / Backspace for none</value>
+  </data>
   <data name="Settings_WaitTime.Text" xml:space="preserve">
     <value>Wait time</value>
   </data>

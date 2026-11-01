@@ -216,6 +216,10 @@ namespace SubMonitorSleeper
                 return;
             }
 
+            // 「なし」に設定してある（キー 0）なら登録しない。窓は作っておくので、後から設定画面で付け直せる
+            if (_settings.HotkeyVirtualKey == 0)
+                return;
+
             if (_hotkey.TryRegister(_settings.HotkeyModifiers, _settings.HotkeyVirtualKey))
                 return;
 
@@ -443,6 +447,15 @@ namespace SubMonitorSleeper
 
         public void CancelHotkeyCapture() =>
             _hotkey?.TryRegister(_settings.HotkeyModifiers, _settings.HotkeyVirtualKey);
+
+        public void ClearHotkey()
+        {
+            // 修飾キー・キーとも 0 を「なし」として保存する（TryRegister は 0 を登録しないので、取消時も外れたまま）
+            _hotkey?.Unregister();
+            _settings.HotkeyModifiers = 0;
+            _settings.HotkeyVirtualKey = 0;
+            _settings.Save();
+        }
 
         // ───────── 通知 ─────────
 

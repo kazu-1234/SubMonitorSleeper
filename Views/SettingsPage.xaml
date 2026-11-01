@@ -19,7 +19,7 @@
                         <TextBlock x:Uid="Settings_TargetMonitor" Style="{StaticResource CardHeaderTextStyle}" />
                     </controls:SettingsCard.Header>
                     <ComboBox x:Name="TargetMonitorComboBox"
-                              MinWidth="{StaticResource SettingsComboBoxMinWidth}"
+                              Style="{StaticResource CompactComboBoxThemeStyle}"
                               SelectionChanged="TargetMonitorComboBox_SelectionChanged" />
                 </controls:SettingsCard>
 
@@ -29,20 +29,22 @@
                         <TextBlock x:Uid="Settings_PowerOffValue" Style="{StaticResource CardHeaderTextStyle}" />
                     </controls:SettingsCard.Header>
                     <ComboBox x:Name="PowerOffValueComboBox"
-                              MinWidth="{StaticResource SettingsComboBoxMinWidth}"
+                              Style="{StaticResource CompactComboBoxThemeStyle}"
                               SelectionChanged="PowerOffValueComboBox_SelectionChanged" />
                 </controls:SettingsCard>
 
-                <!-- ホットキー: ボタンを押すとキー入力の受付状態になる。説明欄は入力中・失敗の表示用 -->
+                <!-- ホットキー: ボタンを押すとキー入力の受付状態になる。説明欄は入力中・失敗の表示用
+                     （空のときは畳んでおく。残すと見出しが上に寄って縦中央からずれるため） -->
                 <controls:SettingsCard>
                     <controls:SettingsCard.Header>
                         <StackPanel Spacing="4" MinWidth="0">
                             <TextBlock x:Uid="Settings_Hotkey" Style="{StaticResource CardHeaderTextStyle}" />
-                            <TextBlock x:Name="HotkeyStatusText" Style="{StaticResource CardDescriptionTextStyle}" />
+                            <TextBlock x:Name="HotkeyStatusText"
+                                       Style="{StaticResource CardDescriptionTextStyle}"
+                                       Visibility="Collapsed" />
                         </StackPanel>
                     </controls:SettingsCard.Header>
                     <Button x:Name="HotkeyButton"
-                            MinWidth="{StaticResource SettingsComboBoxMinWidth}"
                             Click="HotkeyButton_Click"
                             PreviewKeyDown="HotkeyButton_PreviewKeyDown"
                             PreviewKeyUp="HotkeyButton_PreviewKeyUp"

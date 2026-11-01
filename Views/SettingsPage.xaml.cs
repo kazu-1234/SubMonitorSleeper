@@ -20,6 +20,9 @@ namespace SubMonitorSleeper.Views
         public SettingsPage()
         {
             InitializeComponent();
+            // 設定画面の ComboBox は 3 つとも同じ見た目（右寄せ・選択中の文字に合わせた幅・同じ余白）にそろえる
+            CompactComboBoxHelper.AttachFitToSelectedText(TargetMonitorComboBox);
+            CompactComboBoxHelper.AttachFitToSelectedText(PowerOffValueComboBox);
             CompactComboBoxHelper.AttachFitToSelectedText(ThemeComboBox);
             ToggleSwitchClickHelper.ProtectFromParentCapture(AutoStartToggle);
             AutostartExpandHelper.AttachSkipInitialAnimation(AutoStartExpander);
@@ -186,7 +189,20 @@ namespace SubMonitorSleeper.Views
             if (_state == null)
                 return;
 
-            HotkeyButton.Content = HotkeyService.Format(_state.Settings.HotkeyModifiers, _state.Settings.HotkeyVirtualKey);
+            // キー 0 は「なし」（ホットキーを使わない）
+            HotkeyButton.Content = _state.Settings.HotkeyVirtualKey == 0
+                ? Strings.Get("Settings_Hotkey_None")
+                : HotkeyService.Format(_state.Settings.HotkeyModifiers, _state.Settings.HotkeyVirtualKey);
+        }
+
+        /// <summary>
+        /// ホットキー行の説明欄に文言を出す。空なら欄ごと畳む
+        /// （空の TextBlock が残ると見出しが上に寄り、他の行と縦位置がずれるため）。
+        /// </summary>
+        private void SetHotkeyStatus(string text)
+        {
+            HotkeyStatusText.Text = text;
+            HotkeyStatusText.Visibility = string.IsNullOrEmpty(text) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)
@@ -198,7 +214,8 @@ namespace SubMonitorSleeper.Views
             _isCapturingHotkey = true;
             _state.SubMonitor.BeginHotkeyCapture();
             HotkeyButton.Content = Strings.Get("Settings_Hotkey_Capturing");
-            HotkeyStatusText.Text = string.Empty;
+            // 受付中は操作の案内（Esc で取消 / Delete・Backspace で「なし」）を出す
+            SetHotkeyStatus(Strings.Get("Settings_Hotkey_CaptureHint"));
         }
 
         private void HotkeyButton_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
@@ -221,17 +238,29 @@ namespace SubMonitorSleeper.Views
                 return;
 
             uint modifiers = ReadCurrentModifiers();
+
+            // 修飾キー無しの Delete / Backspace は「なし」にする操作（ホットキーを使わない）
+            if (modifiers == 0 && e.Key is VirtualKey.Delete or VirtualKey.Back)
+            {
+                _swallowNextKeyUp = true;
+                _isCapturingHotkey = false;
+                _state.SubMonitor.ClearHotkey();
+                SetHotkeyStatus(string.Empty);
+                ShowCurrentHotkey();
+                return;
+            }
+
             if (modifiers == 0)
             {
                 // 修飾キー無しの 1 文字はふだんの入力とぶつかるので受け付けない
-                HotkeyStatusText.Text = Strings.Get("Settings_Hotkey_NeedModifier");
+                SetHotkeyStatus(Strings.Get("Settings_Hotkey_NeedModifier"));
                 return;
             }
 
             _swallowNextKeyUp = true;
             _isCapturingHotkey = false;
             bool ok = _state.SubMonitor.ApplyHotkey(modifiers, (uint)e.Key);
-            HotkeyStatusText.Text = ok ? string.Empty : Strings.Get("Settings_Hotkey_RegisterFailed");
+            SetHotkeyStatus(ok ? string.Empty : Strings.Get("Settings_Hotkey_RegisterFailed"));
             ShowCurrentHotkey();
         }
 
@@ -254,7 +283,7 @@ namespace SubMonitorSleeper.Views
 
             _isCapturingHotkey = false;
             _state?.SubMonitor?.CancelHotkeyCapture();
-            HotkeyStatusText.Text = string.Empty;
+            SetHotkeyStatus(string.Empty);
             ShowCurrentHotkey();
         }
 

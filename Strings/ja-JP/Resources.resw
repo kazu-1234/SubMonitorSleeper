@@ -334,6 +334,12 @@
   <data name="Settings_Hotkey_RegisterFailed" xml:space="preserve">
     <value>登録できませんでした（他のアプリが使用中）</value>
   </data>
+  <data name="Settings_Hotkey_None" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="Settings_Hotkey_CaptureHint" xml:space="preserve">
+    <value>Esc で取り消し、Delete / Backspace で「なし」</value>
+  </data>
   <data name="Settings_WaitTime.Text" xml:space="preserve">
     <value>待ち時間</value>
   </data>

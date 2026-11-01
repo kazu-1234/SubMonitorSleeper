@@ -37,6 +37,9 @@ namespace SubMonitorSleeper
 
         /// <summary>キー入力の受付を取り消す（元のホットキーを登録し直す）。</summary>
         void CancelHotkeyCapture();
+
+        /// <summary>ホットキーを「なし」にして保存する（登録を外す）。</summary>
+        void ClearHotkey();
     }
 
     /// <summary>ページ間で共有するアプリ状態。</summary>

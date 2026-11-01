@@ -13,8 +13,6 @@
             <x:Double x:Key="PageContentMaxWidth">1000</x:Double>
             <x:Double x:Key="SettingsCardSpacing">4</x:Double>
             <x:Double x:Key="ControlRowSpacing">12</x:Double>
-            <!-- 設定画面の対象モニター・消灯値の ComboBox とホットキーボタンの最小幅（モニター名が切れないように） -->
-            <x:Double x:Key="SettingsComboBoxMinWidth">220</x:Double>
 
             <Style x:Key="PageHostScrollViewerStyle" TargetType="ScrollViewer">
                 <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
@@ -64,7 +62,9 @@
                 <Setter Property="HorizontalAlignment" Value="Left" />
             </Style>
 
-            <!-- テーマ ComboBox: 右端位置は維持。文字左右余白は Padding、幅は CompactComboBoxHelper -->
+            <!-- 設定画面の ComboBox 共通（テーマ・対象モニター・消灯時の値）: 右端位置は維持。
+                 文字左右余白は Padding、幅は CompactComboBoxHelper で選択中の文字に合わせる -->
+
             <Style x:Key="CompactComboBoxThemeStyle" TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
                 <Setter Property="Padding" Value="12,2,0,2" />
                 <Setter Property="MinWidth" Value="0" />
