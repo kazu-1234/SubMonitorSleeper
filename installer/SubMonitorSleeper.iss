@@ -3,7 +3,7 @@
 ; 複製時は MyAppName / AppId / URL / アイコンパスを新しいアプリ名に変更すること。
 
 #define MyAppName "SubMonitorSleeper"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "kazu-1234"
 #define MyAppURL "https://github.com/kazu-1234/SubMonitorSleeper"
 #define MyAppExeName "SubMonitorSleeper.exe"
