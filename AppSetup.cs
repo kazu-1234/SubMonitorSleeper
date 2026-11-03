@@ -11,6 +11,21 @@ namespace SubMonitorSleeper
         /// <summary>%AppData% のフォルダ名・Mutex 名・User-Agent などに使う識別名。公開後は変えない。</summary>
         public const string AppName = "SubMonitorSleeper";
 
+        /// <summary>
+        /// 自動起動の登録名（タスク名・Run の名前・ショートカット名。公開後は変えない）。
+        /// ログオンタスク（既定）とスタートアップ（レジストリ Run）を Settings.UseLogonTask で切り替える。
+        /// Debug ビルドの exe を登録しない対策は共通部（AutostartService）が行う。
+        /// </summary>
+        public static readonly AutostartController Autostart = new(new AutostartIdentity
+        {
+            AppName = AppName,
+            LogonTaskName = AppName + " Logon",
+            RegistryName = AppName,
+            // true にしないと useLogonTask = false でもタスク登録になる（スタートアップ方式を選べるようにするため）
+            AllowRegistryRun = true,
+            StartupShortcutNames = [AppName + ".lnk", AppName + " - Shortcut.lnk"]
+        });
+
         // 型の選び方:
         //   常駐型（BlueShift / SPM 系）  … CloseBehavior = KeepRunning, UseTray = true（自動起動を使うなら SyncAutostart も渡す）
         //   ウィンドウ型（LHD / Music 系）… CloseBehavior = ExitProcess, UseTray = false, SyncAutostart = null
@@ -26,8 +41,9 @@ namespace SubMonitorSleeper
             CloseBehavior = WindowCloseBehavior.KeepRunning,
             UseTray = true,
             UseResumeMonitor = true,
-            // 共通部は終了時の掃除（false）にだけ使うので、方式の引数は既定値でよい（SPM と同じ）
-            SyncAutostart = enable => StartupManager.SyncAutostartWithSettings(enable),
+            // 自動起動の窓口。--sync-autostart / --cleanup-autostart、起動時の移行と同期、終了時の掃除を共通部が行う
+            Autostart = Autostart,
+            LoadSettings = Settings.Load,
 
             // 他アプリと衝突しないウィンドウクラス名（AppName を含める）
             SystemEventWindowClassName = "SubMonitorSleeperSystemEventWindow_v2",

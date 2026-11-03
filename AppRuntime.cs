@@ -1,4 +1,4 @@
-// v1.0.2
+// v1.1.0
 
 using System;
 using System.Collections.Generic;
@@ -237,10 +237,10 @@ namespace SubMonitorSleeper
             _ = Task.Run(async () =>
             {
                 await Task.Delay(StartupHotkeyFailureNoticeDelayMs).ConfigureAwait(false);
-                UiDispatcher.TryEnqueue(() => TrayIcon?.ShowBalloon(
+                ShowTrayBalloon(
                     Strings.Get("Tray_HotkeyFailedTitle"),
                     Strings.Format("Tray_HotkeyFailedBody", keys),
-                    isWarning: true));
+                    isWarning: true);
             });
         }
 
@@ -530,8 +530,8 @@ namespace SubMonitorSleeper
             if (pausedNow)
                 body += "\n" + Strings.Get("Ddc_AutoPaused");
 
-            // トレイは UI スレッドの持ち物なので、バックグラウンドからは UI スレッドに積んで出す
-            UiDispatcher.TryEnqueue(() => TrayIcon?.ShowBalloon(title, body, isWarning: true));
+            // トレイは UI スレッドの持ち物。ShowTrayBalloon が UI スレッドに積んで出すので、ここから呼んでよい
+            ShowTrayBalloon(title, body, isWarning: true);
         }
 
         private void SaveSettingsOnUiThread()

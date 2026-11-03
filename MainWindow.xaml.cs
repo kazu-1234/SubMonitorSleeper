@@ -1,192 +1,60 @@
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.IO;
-using System.Linq;
 using SubMonitorSleeper.Views;
 using WinUiShared;
 
 namespace SubMonitorSleeper
 {
+    /// <summary>
+    /// メインウィンドウ。テーマ・タイトルバー・窓の位置の保存と復元・左ナビのページ移動・閉じる処理は
+    /// 共通部の MainWindowShell が行う。このファイルには、このアプリ固有の値（サイズ・ページ表）だけを書く。
+    /// </summary>
     public sealed partial class MainWindow : Window, IAppMainWindow
     {
+        // 保存値が無いときの窓の大きさ（物理ピクセル）と最小サイズ（DIP）
         private const int DefaultClientWidth = 960;
         private const int DefaultClientHeight = 680;
         private const double MinimumWindowWidth = 870;
         private const double MinimumWindowHeight = 600;
 
-        private readonly AppRuntime _runtime;
-        private readonly AppState _appState;
-        private bool _windowBoundsReady;
-        private string _currentPageTag = "Settings";
-        private TitleBarThemeHelper? _titleBarThemeHelper;
+        private readonly MainWindowShell _shell;
 
         public MainWindow(AppRuntime runtime)
         {
-            _runtime = runtime;
-            _appState = runtime.AppState;
-
             InitializeComponent();
-            Title = Strings.Get("AppName");
-            AppTitleBar.Title = Strings.Get("AppName");
-            ApplyWindowIcon();
 
-            ThemeService.AttachRoot(RootGrid);
-            _titleBarThemeHelper = new TitleBarThemeHelper(this, RootGrid, AppTitleBar);
-
-            AppWindow.Closing += AppWindow_Closing;
-            AppWindow.Changed += AppWindow_Changed;
-            ContentFrame.NavigationFailed += ContentFrame_NavigationFailed;
-
-            ConfigureMinimumWindowSize();
-        }
-
-        /// <summary>
-        /// Auto Dark Mode と同じ順序: Navigate → 位置サイズ復元 → Activate。
-        /// </summary>
-        public void PrepareAndActivate(string? initialPageTag = null)
-        {
-            string tag = string.IsNullOrEmpty(initialPageTag) ? GetDefaultPageTag() : initialPageTag;
-            NavigateToPage(tag, force: true, suppressTransition: true);
-            RestoreWindowBounds();
-            _windowBoundsReady = true;
-
-            AppWindow.IsShownInSwitchers = true;
-            Activate();
-        }
-
-        public void NavigateToPageTag(string tag) => NavigateToPage(tag, force: false, suppressTransition: true);
-
-        public void SaveWindowBoundsFromRuntime() => SaveWindowBounds();
-
-        // Home を持たないので、最初に開くのは設定ページ
-        private static string GetDefaultPageTag() => "Settings";
-
-        private void ApplyWindowIcon()
-        {
-            string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico");
-            if (!File.Exists(iconPath))
-                return;
-
-            try
+            _shell = new MainWindowShell(this, new MainWindowShellOptions
             {
-                AppWindow.SetIcon(iconPath);
-            }
-            catch
-            {
-                // SetIcon 失敗時はタイトルバー / トレイのフォールバック表示に任せる
-            }
+                RootElement = RootGrid,
+                TitleBar = AppTitleBar,
+                NavView = NavView,
+                ContentFrame = ContentFrame,
+                PlacementSettings = runtime.Settings,
+                DefaultWidth = DefaultClientWidth,
+                DefaultHeight = DefaultClientHeight,
+                MinimumWidth = MinimumWindowWidth,
+                MinimumHeight = MinimumWindowHeight,
+                DefaultPageTag = "Settings",
+                ResolvePageType = ResolvePageType,
+                NavigationParameter = () => runtime.AppState
+            });
         }
 
-        private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
+        public void PrepareAndActivate(string? initialPageTag = null) => _shell.PrepareAndActivate(initialPageTag);
+
+        public void NavigateToPageTag(string tag) => _shell.NavigateToPageTag(tag);
+
+        public void SaveWindowBoundsFromRuntime() => _shell.SaveWindowBounds();
+
+        /// <summary>左ナビのタグ → ページの型（このアプリにホームは無いので、知らないタグは設定）。ページを足したらここと XAML の項目を足す。</summary>
+        private static Type ResolvePageType(string tag) => tag switch
         {
-            Title = $"{Strings.Get("AppName")} - {e.Exception?.Message}";
-        }
+            "Info" => typeof(InfoPage),
+            _ => typeof(SettingsPage)
+        };
 
-        private void ConfigureMinimumWindowSize()
-        {
-            if (AppWindow.Presenter is not OverlappedPresenter presenter)
-                return;
-
-            presenter.IsResizable = true;
-            double scaleFactor = RootGrid.XamlRoot?.RasterizationScale ?? 1.0;
-            presenter.PreferredMinimumWidth = (int)(MinimumWindowWidth * scaleFactor);
-            presenter.PreferredMinimumHeight = (int)(MinimumWindowHeight * scaleFactor);
-            presenter.PreferredMaximumWidth = 10000;
-            presenter.PreferredMaximumHeight = 10000;
-        }
-
-        private void AppWindow_Changed(AppWindow sender, AppWindowChangedEventArgs args)
-        {
-            if (_runtime.IsExitingProcess || !_windowBoundsReady)
-                return;
-
-            if (args.DidSizeChange || args.DidPositionChange)
-                SaveWindowBounds();
-        }
-
-        private void SaveWindowBounds()
-        {
-            if (!_windowBoundsReady)
-                return;
-
-            WindowPlacementHelper.Save(this, _runtime.Settings);
-        }
-
-        private void RestoreWindowBounds()
-        {
-            WindowPlacementHelper.Restore(this, _runtime.Settings, DefaultClientWidth, DefaultClientHeight);
-        }
-
-        private void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
-        {
-            if (_runtime.IsExitingProcess)
-                return;
-
-            SaveWindowBounds();
-            _runtime.OnMainWindowClosing(this);
-
-            // × は本当に Close する（Hide しない）。閉じた後どうするか（常駐を続ける / プロセス終了 /
-            // デバッグ実行中の終了）は AppRuntimeBase が AppSetup.Profile の型に従って決める
-            args.Cancel = false;
-            AppWindow.Closing -= AppWindow_Closing;
-            AppWindow.Changed -= AppWindow_Changed;
-        }
-
-        private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-        {
-            if (args.InvokedItemContainer is NavigationViewItem item && item.Tag is string tag)
-                NavigateToPage(tag);
-        }
-
-        private void NavigateToPage(string tag, bool force = false, bool suppressTransition = false)
-        {
-            if (!force && _currentPageTag == tag && ContentFrame.CurrentSourcePageType != null)
-            {
-                UpdateNavSelection(tag);
-                return;
-            }
-
-            _currentPageTag = tag;
-            Type pageType = tag switch
-            {
-                "Info" => typeof(InfoPage),
-                _ => typeof(SettingsPage)
-            };
-
-            if (force || ContentFrame.CurrentSourcePageType != pageType)
-            {
-                if (suppressTransition)
-                    ContentFrame.Navigate(pageType, _appState, new SuppressNavigationTransitionInfo());
-                else
-                    ContentFrame.Navigate(pageType, _appState);
-            }
-
-            UpdateNavSelection(tag);
-        }
-
-        private void UpdateNavSelection(string tag)
-        {
-            NavigationViewItem? match = null;
-            foreach (var item in NavView.MenuItems.OfType<NavigationViewItem>())
-            {
-                if (item.Tag as string == tag)
-                    match = item;
-            }
-
-            foreach (var item in NavView.FooterMenuItems.OfType<NavigationViewItem>())
-            {
-                if (item.Tag as string == tag)
-                    match = item;
-            }
-
-            if (match != null)
-                NavView.SelectedItem = match;
-            else if (NavItemSettings != null)
-                NavView.SelectedItem = NavItemSettings;
-        }
+        private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) =>
+            _shell.OnNavItemInvoked(sender, args);
     }
 }

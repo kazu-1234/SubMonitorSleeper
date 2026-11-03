@@ -1,4 +1,4 @@
-// v1.0.2
+// v1.1.0
 
 using Microsoft.UI.Xaml;
 using System;
@@ -26,37 +26,22 @@ namespace SubMonitorSleeper
                 _runtime?.RestoreSubMonitorAfterCrash("unhandled");
                 AppBootstrap.HandleUnhandledException(e);
             };
-
-            // UI 以外のスレッドの未処理例外はプロセスが必ず落ちる。落ちる前に、消えたままのサブだけは点灯に戻す
-            AppDomain.CurrentDomain.UnhandledException += (_, _) =>
-                _runtime?.RestoreSubMonitorAfterCrash("domain-unhandled");
+            // UI スレッド以外の例外と、待たれずに失敗した Task の例外も lifetime.log に残す。
+            // UI 以外のスレッドの未処理例外はプロセスが必ず落ちるので、落ちる前に消えたままのサブだけは点灯に戻す
+            AppBootstrap.InstallGlobalExceptionLogging(() => _runtime?.RestoreSubMonitorAfterCrash("domain-unhandled"));
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             var settings = Settings.Load();
-            bool launchInBackground = AppBootstrap.HasCommandLineArg(AppBootstrap.BackgroundArg);
-            bool requestInteractiveShow = !launchInBackground;
 
-            if (!SingleInstance.TryBecomePrimaryInstance(requestInteractiveShow))
-            {
-                // 既に起動中のインスタンスへ表示依頼を送ったので、このプロセスは何もせず終了する
-                Exit();
+            // 単一インスタンス・自動起動の移行と同期は共通処理。二重起動なら null（既存の窓に表示を頼んで終了済み）
+            PrimaryLaunch? launch = AppBootstrap.BeginPrimaryLaunch(this, settings);
+            if (launch == null)
                 return;
-            }
-
-            // スタートアップ（レジストリ）方式を選んでいるときは移行で Run を消さない
-            if (settings.UseLogonTask)
-                StartupManager.MigrateFromLegacyIfNeeded();
-#if !DEBUG
-            // 起動時にログオンタスク（またはスタートアップ）を「今動いている exe」へ合わせ直す（primary だけが行う）。
-            // Debug ビルドで行うと、インストール版の登録が bin\Debug の exe に書き換わってしまうため Release のみ。
-            // （設定画面で自動起動を切り替えたときや --sync-autostart の明示同期は Debug でも行う）
-            StartupManager.SyncAutostartWithSettings(settings.AutoStart, settings.UseLogonTask);
-#endif
 
             _runtime = new AppRuntime(this, settings);
-            _runtime.Start(launchInBackground, requestInteractiveShow);
+            _runtime.Start(launch.LaunchInBackground, launch.RequestInteractiveShow);
         }
     }
 }

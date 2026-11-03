@@ -3,14 +3,28 @@
 ; 複製時は MyAppName / AppId / URL / アイコンパスを新しいアプリ名に変更すること。
 
 #define MyAppName "SubMonitorSleeper"
-#define MyAppVersion "1.0.2"
+; 版は csproj の <Version> だけが正本。scripts\build-installer.ps1 が ISCC に /DMyAppVersion=版 で渡す
+#ifndef MyAppVersion
+  #error MyAppVersion がありません。scripts\build-installer.ps1 から作成してください。
+#endif
 #define MyAppPublisher "kazu-1234"
 #define MyAppURL "https://github.com/kazu-1234/SubMonitorSleeper"
 #define MyAppExeName "SubMonitorSleeper.exe"
 #define PublishDir "..\dist\folder"
+#define MyAppId "{{EC915F7D-C63B-43BE-8718-565267EC9638}"
+
+; 複製したのに AppId を変えていないときはビルドを止める
+#define TemplateAppId "{{A31CAAA6-8EA8-458F-8348-A91324E0EEC1}"
+#define LegacyTemplateAppId "{{B1E2D3C4-5A67-4890-B1C2-D3E4F5A60789}"
+#if MyAppName != "WinUiAppTemplate" && MyAppId == TemplateAppId
+  #error MyAppId がテンプレートのままです。新しい GUID に変更してください。
+#endif
+#if MyAppName != "SunriseWatcher" && MyAppId == LegacyTemplateAppId
+  #error MyAppId が旧テンプレートの値（SunriseWatcher が使用中）です。新しい GUID に変更してください。
+#endif
 
 [Setup]
-AppId={{EC915F7D-C63B-43BE-8718-565267EC9638}
+AppId={#MyAppId}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}

@@ -16,6 +16,8 @@ namespace SubMonitorSleeper.Views
     {
         private AppState? _state;
         private bool _isInitializing;
+        private readonly ThemeComboBoxBinder _theme;
+        private readonly AutostartSettingsController _autostart;
 
         public SettingsPage()
         {
@@ -23,9 +25,23 @@ namespace SubMonitorSleeper.Views
             // 設定画面の ComboBox は 3 つとも同じ見た目（右寄せ・選択中の文字に合わせた幅・同じ余白）にそろえる
             CompactComboBoxHelper.AttachFitToSelectedText(TargetMonitorComboBox);
             CompactComboBoxHelper.AttachFitToSelectedText(PowerOffValueComboBox);
-            CompactComboBoxHelper.AttachFitToSelectedText(ThemeComboBox);
-            ToggleSwitchClickHelper.ProtectFromParentCapture(AutoStartToggle);
-            AutostartExpandHelper.AttachSkipInitialAnimation(AutoStartExpander);
+            _theme = new ThemeComboBoxBinder(
+                ThemeComboBox,
+                get: () => _state?.Settings.ThemePreference ?? AppThemePreference.System,
+                set: value => { if (_state != null) _state.Settings.ThemePreference = value; },
+                save: () => _state?.Settings.Save());
+
+            _autostart = new AutostartSettingsController(new AutostartSettingsControls
+            {
+                AutoStartToggle = AutoStartToggle,
+                Expander = AutoStartExpander,
+                UseLogonTaskCheckBox = AutostartTaskOnlyCheckBox,
+                TypeLine = AutostartTypeLine,
+                PathLine = AutostartPathLine,
+                RefreshButton = RefreshAutostartButton,
+                HideTrayIconCheckBox = HideTrayIconCheckBox,
+                ShowStartupNotificationCheckBox = ShowStartupNotificationCheckBox
+            }, AppSetup.Autostart);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -37,25 +53,8 @@ namespace SubMonitorSleeper.Views
 
             _isInitializing = true;
 
-            ThemeComboBox.Items.Clear();
-            ThemeComboBox.Items.Add(Strings.Get("Settings_Theme_System"));
-            ThemeComboBox.Items.Add(Strings.Get("Settings_Theme_Light"));
-            ThemeComboBox.Items.Add(Strings.Get("Settings_Theme_Dark"));
-            // 項目の並び（システム / ライト / ダーク）と設定値を明示的に対応付ける。
-            // enum の数値をそのまま添字に使うと、並び替え時に別の項目が選ばれてしまうため。
-            ThemeComboBox.SelectedIndex = _state.Settings.ThemePreference switch
-            {
-                AppThemePreference.Light => 1,
-                AppThemePreference.Dark => 2,
-                _ => 0
-            };
-
-            AutoStartToggle.IsOn = _state.Settings.AutoStart;
-            AutostartTaskOnlyCheckBox.IsChecked = _state.Settings.UseLogonTask;
-            HideTrayIconCheckBox.IsChecked = _state.Settings.HideTrayIcon;
-            ShowStartupNotificationCheckBox.IsChecked = _state.Settings.ShowStartupNotification;
-            AutoStartExpander.IsExpanded = true;
-            RefreshAutostartInfo();
+            _theme.Load();
+            _autostart.Bind(AutostartSettingsAccess.For(_state.Settings, () => _state.ApplyTrayIconVisibility?.Invoke()));
 
             LoadTargetMonitorList();
             LoadPowerOffValueList();
@@ -355,135 +354,6 @@ namespace SubMonitorSleeper.Views
                 TestOffButton.IsEnabled = true;
                 RefreshTargetMonitorText();
             }
-        }
-
-        private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_isInitializing || _state == null)
-                return;
-
-            if (ThemeComboBox.SelectedIndex < 0)
-                return;
-
-            var preference = ThemeComboBox.SelectedIndex switch
-            {
-                1 => AppThemePreference.Light,
-                2 => AppThemePreference.Dark,
-                _ => AppThemePreference.System
-            };
-            if (preference == _state.Settings.ThemePreference)
-                return;
-
-            ThemeService.SetPreference(preference);
-            _state.Settings.ThemePreference = preference;
-            _state.Settings.Save();
-        }
-
-        private void RefreshAutostartInfo()
-        {
-            bool enabled = _state?.Settings.AutoStart ?? false;
-            bool useLogonTask = _state?.Settings.UseLogonTask ?? true;
-
-            // 種類（タスク / スタートアップ）とパスは、今選んでいる方式で表示する
-            AutostartTypeLine.Text = AutostartInfoFormatter.FormatTypeLine(
-                enabled,
-                useLogonTask,
-                Strings.Get,
-                (key, args) => Strings.Format(key, args));
-
-            AutostartPathLine.Text = AutostartInfoFormatter.FormatPathLine(
-                enabled,
-                StartupManager.GetRegisteredCommand(preferLogonTask: useLogonTask),
-                Strings.Get,
-                (key, args) => Strings.Format(key, args));
-        }
-
-        private void RefreshAutostartButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_state == null)
-                return;
-
-            if (_state.Settings.AutoStart)
-                StartupManager.SyncAutostartWithSettings(true, _state.Settings.UseLogonTask);
-
-            RefreshAutostartInfo();
-        }
-
-        private void AutoStartToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (_isInitializing || _state == null)
-                return;
-
-            bool requested = AutoStartToggle.IsOn;
-            if (!StartupManager.SyncAutostartWithSettings(requested, _state.Settings.UseLogonTask) && requested)
-            {
-                _isInitializing = true;
-                AutoStartToggle.IsOn = false;
-                _isInitializing = false;
-                return;
-            }
-
-            _state.Settings.AutoStart = requested;
-            _state.Settings.Save();
-            RefreshAutostartInfo();
-        }
-
-        private void AutostartTaskOnlyCheckBox_Changed(object sender, RoutedEventArgs e)
-        {
-            if (_isInitializing || _state == null)
-                return;
-
-            bool useLogonTask = AutostartTaskOnlyCheckBox.IsChecked == true;
-            if (useLogonTask == _state.Settings.UseLogonTask)
-                return;
-
-            _state.Settings.UseLogonTask = useLogonTask;
-
-            // 自動起動が ON のときだけ、登録を新しい方式へ付け替える（OFF なら次に ON にしたとき反映される）
-            if (_state.Settings.AutoStart)
-            {
-                bool ok = StartupManager.SyncAutostartWithSettings(true, useLogonTask);
-                if (!ok)
-                {
-                    // 切替失敗時は元の方式に戻す（設定と実際の登録がずれないように）
-                    _isInitializing = true;
-                    _state.Settings.UseLogonTask = !useLogonTask;
-                    AutostartTaskOnlyCheckBox.IsChecked = !useLogonTask;
-                    _isInitializing = false;
-                    return;
-                }
-            }
-
-            _state.Settings.Save();
-            RefreshAutostartInfo();
-        }
-
-        private void HideTrayIconCheckBox_Changed(object sender, RoutedEventArgs e)
-        {
-            if (_isInitializing || _state == null)
-                return;
-
-            bool hide = HideTrayIconCheckBox.IsChecked == true;
-            if (hide == _state.Settings.HideTrayIcon)
-                return;
-
-            _state.Settings.HideTrayIcon = hide;
-            _state.Settings.Save();
-            _state.ApplyTrayIconVisibility?.Invoke();
-        }
-
-        /// <summary>起動時の「常駐準備完了」通知の ON/OFF を保存する（次回起動から反映）。</summary>
-        private void ShowStartupNotificationCheckBox_Changed(object sender, RoutedEventArgs e)
-        {
-            if (_isInitializing || _state == null)
-                return;
-
-            bool show = ShowStartupNotificationCheckBox.IsChecked == true;
-            if (show == _state.Settings.ShowStartupNotification)
-                return;
-
-            _state.Settings.ShowStartupNotification = show;
-            _state.Settings.Save();
         }
     }
 }

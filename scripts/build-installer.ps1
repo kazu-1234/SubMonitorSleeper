@@ -1,106 +1,20 @@
 ﻿# Build SubMonitorSleeper installer (dotnet publish + Inno Setup)
 # Usage:
 #   powershell -ExecutionPolicy Bypass -File scripts\build-installer.ps1
+#
+# 手順の本体は共通基盤の Shared\scripts\Build-WinUiInstaller.ps1（全アプリ共通）。
+# ここにはこのアプリ固有の値だけを書く。版は csproj の <Version> だけを書き換える（ここと .iss には書かない）。
 
 $ErrorActionPreference = "Stop"
-chcp 65001 | Out-Null
-
 $root = Split-Path -Parent $PSScriptRoot
-Set-Location $root
 
-$version = "1.0.2"
-$publishDir = Join-Path $root "dist\folder"
-$iss = Join-Path $root "installer\SubMonitorSleeper.iss"
-$outDir = Join-Path $root "dist\installer"
-$csproj = Join-Path $root "SubMonitorSleeper.csproj"
-$exeName = "SubMonitorSleeper.exe"
-
-$isccCandidates = @(
-    "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe",
-    "$env:ProgramFiles\Inno Setup 6\ISCC.exe",
-    "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
-    "$env:LOCALAPPDATA\Programs\Inno Setup 7\ISCC.exe",
-    "$env:ProgramFiles\Inno Setup 7\ISCC.exe"
-)
-$iscc = $isccCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
-if (-not $iscc) {
-    throw "ISCC.exe not found. Install Inno Setup 6+."
-}
-
-# 共通基盤を Template（正本）から同期してから publish する（リリースが古い Shared で作られないように）
+# 共通基盤を Template（正本）から同期してから作る（リリースが古い Shared で作られないように）
 & (Join-Path $PSScriptRoot "sync-shared.ps1")
+$shared = Join-Path $root "Shared"
 
-Write-Host "==> Publish (self-contained folder)"
-if (Test-Path $publishDir) {
-    Remove-Item -Recurse -Force $publishDir
-}
-
-# Release の中間ファイルを消して必ずコンパイルし直す（DebugType を変えても差分ビルドでは古い DLL が使い回され、
-# .pdb のパスが埋め込まれたまま配布されてしまうため）
-foreach ($objRelease in @((Join-Path $root "obj\x64\Release"), (Join-Path $root "Shared\obj\Release"))) {
-    if (Test-Path $objRelease) {
-        Remove-Item -Recurse -Force $objRelease
-    }
-}
-
-dotnet publish $csproj `
-    -c Release `
-    -p:Platform=x64 `
-    -r win-x64 `
-    --self-contained true `
-    -p:PublishSingleFile=false `
-    -p:DebugType=none `
-    -o $publishDir
-# DebugType=none: 既定だと DLL に .pdb の絶対パス（C:\Users\<ユーザー名>\...）が埋め込まれ、配布物からユーザー名が分かってしまう。
-# 配布物にはデバッグ情報を入れないので、パスごと出力しない
-
-if ($LASTEXITCODE -ne 0) {
-    throw "dotnet publish failed (exit=$LASTEXITCODE)"
-}
-
-$exe = Join-Path $publishDir $exeName
-if (-not (Test-Path $exe)) {
-    throw "$exeName missing in publish output: $publishDir"
-}
-
-# アプリ本体の .pri（XAML と文言）が無いと、インストール版が起動直後に何も出さず終了する。
-# csproj の CopyAppPriToPublishDir が効いているかをここで確かめ、無ければインストーラを作らずに止める
-$pri = Join-Path $publishDir ([IO.Path]::ChangeExtension((Split-Path $exe -Leaf), ".pri"))
-if (-not (Test-Path $pri)) {
-    throw "$(Split-Path $pri -Leaf) missing in publish output (app would exit on launch): $publishDir"
-}
-
-Get-ChildItem $publishDir -Recurse -File | Where-Object {
-    $_.Extension -eq ".pdb"
-} | ForEach-Object {
-    Remove-Item $_.FullName -Force
-    Write-Host ("removed {0}" -f $_.Name)
-}
-
-$folderBytes = (Get-ChildItem $publishDir -Recurse -File | Measure-Object Length -Sum).Sum
-$folderMb = [math]::Round($folderBytes / 1MB, 1)
-Write-Host ("publish folder: {0} MB" -f $folderMb)
-
-Write-Host "==> Inno Setup compile"
-if (-not (Test-Path $outDir)) {
-    New-Item -ItemType Directory -Path $outDir | Out-Null
-}
-
-& $iscc $iss
-if ($LASTEXITCODE -ne 0) {
-    throw "ISCC failed (exit=$LASTEXITCODE)"
-}
-
-$setup = Join-Path $outDir ("SubMonitorSleeper-v{0}-win-x64-setup.exe" -f $version)
-if (-not (Test-Path $setup)) {
-    throw "Installer not created: $setup"
-}
-
-$setupBytes = (Get-Item $setup).Length
-$setupMb = [math]::Round($setupBytes / 1MB, 1)
-Write-Host ("OK: {0} ({1} MB)" -f $setup, $setupMb)
-
-# SPM と同じく、GitHub Releases に添付しやすいようリポジトリ直下にもコピーする（*.exe は .gitignore で除外）
-$rootCopy = Join-Path $root ("SubMonitorSleeper-v{0}-win-x64-setup.exe" -f $version)
-Copy-Item $setup $rootCopy -Force
-Write-Host ("copied: {0}" -f $rootCopy)
+& (Join-Path $shared "scripts\Build-WinUiInstaller.ps1") `
+    -Root $root `
+    -Csproj "SubMonitorSleeper.csproj" `
+    -Iss "installer\SubMonitorSleeper.iss" `
+    -ExeName "SubMonitorSleeper.exe" `
+    -CopyToRoot
